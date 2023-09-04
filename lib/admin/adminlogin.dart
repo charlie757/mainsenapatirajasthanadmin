@@ -1,8 +1,10 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mainsenapatirajasthanadmin/helper.dart/custombtn.dart';
 import 'package:mainsenapatirajasthanadmin/helper.dart/customtextfield.dart';
 import 'package:mainsenapatirajasthanadmin/utils/collectionreference.dart';
+import 'package:mainsenapatirajasthanadmin/utils/preferences.dart';
 import 'package:mainsenapatirajasthanadmin/utils/routes.dart';
 import 'package:mainsenapatirajasthanadmin/utils/showcircleprogressdialog.dart';
 
@@ -35,6 +37,11 @@ class _AdminLoginState extends State<AdminLogin> {
       passwordError = false;
       setState(() {});
     }
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      alertFlushBar('Error', 'Please enter the email and password!', () {
+        Get.back();
+      });
+    }
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       showCircleProgressDialog(context);
       adminLoginRef
@@ -48,7 +55,14 @@ class _AdminLoginState extends State<AdminLogin> {
             context,
           );
         } else {
-          Get.offAllNamed(Routes.adminDashboard);
+          setUserLogin(true);
+          alertFlushBar('MainSenapatiRajasthan says', 'Logged in successfully!',
+              () {
+            Get.offAllNamed(Routes.adminDashboard);
+          });
+          Future.delayed(const Duration(seconds: 4), () {
+            Get.offAllNamed(Routes.adminDashboard);
+          });
         }
       });
     }
@@ -67,6 +81,14 @@ class _AdminLoginState extends State<AdminLogin> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset(
+                'assets/icons/logo2.webp',
+                height: 120,
+                width: 120,
+              ),
+              const SizedBox(
+                height: 25,
+              ),
               CustomTextfield(
                   hintText: 'Enter email',
                   controller: emailController,
@@ -89,6 +111,7 @@ class _AdminLoginState extends State<AdminLogin> {
                   height: 45,
                   width: double.infinity,
                   onTap: () {
+                    // alertFlushBar();
                     fetchLogin();
                   })
             ],
@@ -135,5 +158,43 @@ class _AdminLoginState extends State<AdminLogin> {
             ),
           );
         });
+  }
+
+  alertFlushBar(String title, String msg, Function() onTap) {
+    // ignore: avoid_single_cascade_in_expression_statements
+    Flushbar(
+      title: title,
+      titleColor: Colors.black,
+      titleSize: 14,
+      messageColor: Colors.black,
+      flushbarPosition: FlushbarPosition.TOP,
+      backgroundColor: Colors.white,
+      barBlur: 10,
+      duration: const Duration(seconds: 3),
+      messageText: Container(
+        padding: const EdgeInsets.only(top: 15),
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(msg),
+            const SizedBox(
+              height: 20,
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child:
+                  CustomBtn(title: 'Ok', height: 30, width: 60, onTap: onTap),
+            )
+          ],
+        ),
+      ),
+      padding: const EdgeInsets.only(top: 20, bottom: 30, left: 20, right: 20),
+      reverseAnimationCurve: Curves.decelerate,
+      forwardAnimationCurve: Curves.elasticOut,
+      maxWidth: 400,
+      borderRadius: BorderRadius.circular(5),
+      margin: const EdgeInsets.all(5),
+    )..show(context);
   }
 }

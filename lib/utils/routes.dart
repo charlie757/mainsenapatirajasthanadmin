@@ -6,4 +6,7 @@ class Routes {
   static var adminDashboard = '/adminDashboard';
   static var viewdata = '/ViewData';
   static var userDetails = '/userDetails';
+  static var allDistrict = '/allDistrict';
+  static var allVidhan = '/allVidhan';
+  static var chart = '/chart';
 }

@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -199,12 +200,42 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 width: 200,
                 onTap: () {
                   Get.toNamed(Routes.userDetails);
-                })
+                }),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomBtn(
+                title: 'All District',
+                height: 40,
+                width: 200,
+                onTap: () {
+                  Get.toNamed(Routes.allDistrict);
+                }),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomBtn(
+                title: 'All Vidhansabha',
+                height: 40,
+                width: 200,
+                onTap: () {
+                  Get.toNamed(Routes.allVidhan);
+                }),
+            const SizedBox(
+              height: 20,
+            ),
+            CustomBtn(
+                title: 'chart',
+                height: 40,
+                width: 200,
+                onTap: () {
+                  Get.toNamed(Routes.chart);
+                }),
           ],
         ),
       ),
       appBar: AppBar(
-        title: const Text('Admin data update'),
+        title: const Text('Admin'),
         centerTitle: true,
       ),
       body: Align(

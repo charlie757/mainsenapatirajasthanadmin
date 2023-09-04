@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mainsenapatirajasthanadmin/model/usermodel.dart';
 import 'package:mainsenapatirajasthanadmin/utils/collectionreference.dart';
+import 'package:mainsenapatirajasthanadmin/utils/colorconstants.dart';
 import 'package:mainsenapatirajasthanadmin/utils/showcircleprogressdialog.dart';
 
 class UserDetails extends StatefulWidget {
@@ -20,9 +23,10 @@ class _UserDetailsState extends State<UserDetails> {
   List userList = [];
   fetchData() async {
     userList.clear();
-    showCircleProgressDialog(context);
+    // showCircleProgressDialog(context);
     usersRef.get().then((value) {
-      Navigator.pop(context);
+      print(value.docs.length);
+      // Navigator.pop(context);
       for (int i = 0; i < value.docs.length; i++) {
         usersRef
             .doc(value.docs[i]['id'])
@@ -37,6 +41,8 @@ class _UserDetailsState extends State<UserDetails> {
               value.docs[i]['vidhan'],
               value.docs[i]['age'],
               value.docs[i]['gendor'],
+              value.docs[i]['createdAt'],
+              value.docs[i]['updateAt'] ?? '',
               value1.docs.isNotEmpty ? value1.docs[0]['education'] : '-',
               value1.docs.isNotEmpty ? value1.docs[0]['occupation'] : "-",
               value1.docs.isNotEmpty ? value1.docs[0]['vehicle_type'] : "-",
@@ -57,7 +63,14 @@ class _UserDetailsState extends State<UserDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xff213865),
+        backgroundColor: ColorConstants.backgroundColor,
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text(
+            'Users',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: SingleChildScrollView(
@@ -139,6 +152,16 @@ class _UserDetailsState extends State<UserDetails> {
         'onground_work',
         style: TextStyle(color: Colors.white),
       )),
+      const DataColumn(
+          label: Text(
+        'Create Time',
+        style: TextStyle(color: Colors.white),
+      )),
+      const DataColumn(
+          label: Text(
+        'Update Time',
+        style: TextStyle(color: Colors.white),
+      )),
     ];
   }
 
@@ -161,6 +184,16 @@ class _UserDetailsState extends State<UserDetails> {
             dataCell(e.govtStatisfaction.toString()),
             dataCell(e.congressWorker.toString()),
             dataCell(e.ongroundWork.toString()),
+            dataCell(DateFormat('MM-dd-yyyy, hh:mm a')
+                .format(DateTime.fromMillisecondsSinceEpoch(
+                    e.createdAt.seconds * 1000))
+                .toString()),
+            dataCell(e.updateAt.toString().isEmpty
+                ? '-'
+                : DateFormat('MM-dd-yyyy, hh:mm a')
+                    .format(DateTime.fromMillisecondsSinceEpoch(
+                        e.updateAt.seconds * 1000))
+                    .toString()),
           ]);
     }).toList();
   }
@@ -228,34 +261,4 @@ class _UserDetailsState extends State<UserDetails> {
       ],
     );
   }
-}
-
-class UserModel {
-  dynamic name;
-  dynamic number;
-  dynamic district;
-  dynamic vidhansabha;
-  dynamic age;
-  dynamic gendar;
-  dynamic education;
-  dynamic occupation;
-  dynamic vehicleType;
-  dynamic govtStatisfaction;
-  dynamic congressWorker;
-  dynamic ongroundWork;
-
-  UserModel(
-    this.name,
-    this.number,
-    this.district,
-    this.vidhansabha,
-    this.age,
-    this.gendar,
-    this.education,
-    this.occupation,
-    this.vehicleType,
-    this.govtStatisfaction,
-    this.congressWorker,
-    this.ongroundWork,
-  );
 }

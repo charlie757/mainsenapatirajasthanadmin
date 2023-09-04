@@ -7,9 +7,13 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:mainsenapatirajasthanadmin/admin/admindashboard.dart';
 import 'package:mainsenapatirajasthanadmin/admin/adminlogin.dart';
+import 'package:mainsenapatirajasthanadmin/admin/alldistrict.dart';
+import 'package:mainsenapatirajasthanadmin/admin/allvidhansabha.dart';
+import 'package:mainsenapatirajasthanadmin/admin/showchartdata.dart';
 import 'package:mainsenapatirajasthanadmin/admin/userdetails.dart';
 import 'package:mainsenapatirajasthanadmin/admin/viewdata.dart';
 import 'package:mainsenapatirajasthanadmin/utils/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -32,10 +36,32 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+
+  @override
+  void initState() {
+    checkUserLogin();
+    super.initState();
+  }
+
+  bool isLogin = false;
+
+  checkUserLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('isLogin') != null) {
+      isLogin = prefs.getBool('isLogin')!;
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -76,6 +102,24 @@ class MyApp extends StatelessWidget {
             transitionDuration: const Duration(milliseconds: 100),
             curve: Curves.easeInOut),
         GetPage(
+            name: Routes.chart,
+            page: () => const ShowChartData(),
+            transition: Transition.fade,
+            transitionDuration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut),
+        GetPage(
+            name: Routes.allDistrict,
+            page: () => const AllDistrict(),
+            transition: Transition.fade,
+            transitionDuration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut),
+        GetPage(
+            name: Routes.allVidhan,
+            page: () => const AllVidhan(),
+            transition: Transition.fade,
+            transitionDuration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut),
+        GetPage(
             name: Routes.adminLogin,
             page: () => const AdminLogin(),
             transition: Transition.fade,
@@ -98,7 +142,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AdminLogin(),
+      home: isLogin ? const AdminDashboard() : const AdminLogin(),
     );
   }
 }
